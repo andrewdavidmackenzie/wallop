@@ -124,8 +124,8 @@ class ClockPainter extends CustomPainter {
   void drawHands(Canvas canvas, Offset center, double radius) {
     // Concentric circles
     var secondHandLength = radius * 0.9;
-    var minuteHandLength = radius * 0.75;
-    var hourHandLength = radius * 0.6;
+    var minuteHandLength = radius * 0.77;
+    var hourHandLength = radius * 0.55;
 
     var hourHandWidth = radius * 0.07;
     var minuteHandWidth = radius * 0.05;
