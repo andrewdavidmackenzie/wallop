@@ -4,6 +4,7 @@ import 'dart:io';
 //import 'package:flutter/material.dart';
 //import 'package:preference_list/preference_list.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:tray_manager/tray_manager.dart';
 
 //const _kIconTypeDefault = 'default';
@@ -51,8 +52,16 @@ class Tray {
   }
 
   void onTrayMenuItemClick(MenuItem menuItem) {
-    if (kDebugMode) {
-      print(menuItem.toJson());
+    switch (menuItem.title) {
+      case "Quit":
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      break;
+
+      default:
+        if (kDebugMode) {
+          print(menuItem.toJson());
+        }
+      break;
     }
   }
 
