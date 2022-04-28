@@ -57,9 +57,7 @@ class Tray {
   }
 
   void popUpContextMenu() {
-    if (kDebugMode) {
-      print("Show context menu");
-    }
+    trayManager.popUpContextMenu();
   }
 
   //
