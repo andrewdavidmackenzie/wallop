@@ -33,7 +33,9 @@ jobs:
 
     - name: Build macos version
       if: matrix.os == 'macos-latest'
-      run: flutter build macos
+      run: |
+        flutter config --enable-macos-desktop
+        flutter build macos
 
     - name: Build web version (on mac)
       if: matrix.os == 'macos-latest'
