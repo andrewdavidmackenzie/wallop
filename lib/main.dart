@@ -21,7 +21,7 @@ class _Wallop extends State<Wallop> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var app = MaterialApp(
+    MaterialApp app = MaterialApp(
       title: 'Wallop',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -42,7 +42,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> with TrayListener {
-  var tray = Tray();
+  Tray tray = Tray();
 
   @override
   void initState() {

@@ -10,9 +10,11 @@ class ClockView extends StatefulWidget {
 }
 
 class _ClockViewState extends State<ClockView> {
+  late Timer _timer;
+
   @override
   void initState() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
     });
     super.initState();
@@ -20,7 +22,7 @@ class _ClockViewState extends State<ClockView> {
 
   @override
   Widget build(BuildContext context) {
-    var clockPainter = ClockPainter();
+    ClockPainter clockPainter = ClockPainter();
     return SizedBox.expand(
       child: Transform.rotate(
         angle: -pi / 2,
@@ -29,6 +31,12 @@ class _ClockViewState extends State<ClockView> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 }
 
@@ -41,28 +49,28 @@ class ClockPainter extends CustomPainter {
     // - where tick marks start - dashCircleInnerRadius
     // - face circle            - faceOutlineRadius
     // - center dot             - centerDotRadius
-    var dashCircleInnerRadius = radius * 0.9;
-    var faceOutlineRadius = dashCircleInnerRadius * 0.9;
-    var centerDotRadius = faceOutlineRadius * 0.1;
+    final double dashCircleInnerRadius = radius * 0.9;
+    final double faceOutlineRadius = dashCircleInnerRadius * 0.9;
+    final double centerDotRadius = faceOutlineRadius * 0.1;
 
     // Draw the face background
-    var fillBrush = Paint()..color = const Color(0xFF444974);
+    final Paint fillBrush = Paint()..color = const Color(0xFF444974);
     canvas.drawCircle(center, faceOutlineRadius, fillBrush);
 
     // draw the outline circle to the center area
-    var outlineBrush = Paint()
+    final Paint outlineBrush = Paint()
       ..color = const Color(0xFFEAECFF)
       ..style = PaintingStyle.stroke
       ..strokeWidth = centerDotRadius;
     canvas.drawCircle(center, faceOutlineRadius, outlineBrush);
 
     // Draw the center dot
-    var centerDotBrush = Paint()..color = const Color(0xFFEAECFF);
+    final Paint centerDotBrush = Paint()..color = const Color(0xFFEAECFF);
     canvas.drawCircle(center, centerDotRadius, centerDotBrush);
 
     // Draw all the marks around the outside
-    var dashWidth = radius * 0.005;
-    var dashBrush = Paint()
+    final double dashWidth = radius * 0.005;
+    final Paint dashBrush = Paint()
       ..color = const Color(0xFFEAECFF)
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -70,40 +78,40 @@ class ClockPainter extends CustomPainter {
 
     for (double i = 0; i < 360; i += 30) {
       // They end touching the outermost circle of radius `outerCircleRadius`
-      var x1 = center.dx + radius * cos(i * pi / 180);
-      var y1 = center.dy + radius * sin(i * pi / 180);
+      final double x1 = center.dx + radius * cos(i * pi / 180);
+      final double y1 = center.dy + radius * sin(i * pi / 180);
 
       // They start at the `dashCircleInnerRadius`
-      var x2 = center.dx + dashCircleInnerRadius * cos(i * pi / 180);
-      var y2 = center.dy + dashCircleInnerRadius * sin(i * pi / 180);
+      final double x2 = center.dx + dashCircleInnerRadius * cos(i * pi / 180);
+      final double y2 = center.dy + dashCircleInnerRadius * sin(i * pi / 180);
       canvas.drawLine(Offset(x1, y1), Offset(x2, y2), dashBrush);
     }
   }
 
   void drawHands(Canvas canvas, Offset center, double radius) {
     // Concentric circles
-    var secondHandLength = radius * 0.9;
-    var minuteHandLength = radius * 0.77;
-    var hourHandLength = radius * 0.55;
+    final double secondHandLength = radius * 0.9;
+    final double minuteHandLength = radius * 0.77;
+    final double hourHandLength = radius * 0.55;
 
-    var hourHandWidth = radius * 0.07;
-    var minuteHandWidth = radius * 0.05;
-    var secondHandWidth = radius * 0.04;
+    final double hourHandWidth = radius * 0.07;
+    final double minuteHandWidth = radius * 0.05;
+    final double secondHandWidth = radius * 0.04;
 
-    var secHandBrush = Paint()
+    final Paint secHandBrush = Paint()
       ..color = const Color(0xFFFFA500)
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = secondHandWidth;
 
-    var minHandBrush = Paint()
+    final Paint minHandBrush = Paint()
       ..shader = const RadialGradient(colors: [Color(0xFF748EF6), Color(0xFF77DDFF)])
           .createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = minuteHandWidth;
 
-    var hourHandBrush = Paint()
+    final Paint hourHandBrush = Paint()
       ..shader = const RadialGradient(colors: [Color(0xFFEA74AB), Color(0xFFC279FB)])
           .createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
@@ -111,29 +119,29 @@ class ClockPainter extends CustomPainter {
       ..strokeWidth = hourHandWidth;
 
     // Draw the Hour hand
-    var hourHandX = center.dx +
+    final double hourHandX = center.dx +
         hourHandLength * cos((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
-    var hourHandY = center.dy +
+    final double hourHandY = center.dy +
         hourHandLength * sin((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
     canvas.drawLine(center, Offset(hourHandX, hourHandY), hourHandBrush);
 
     // Draw the minute hand
-    var minHandX = center.dx + minuteHandLength * cos(dateTime.minute * 6 * pi / 180);
-    var minHandY = center.dy + minuteHandLength * sin(dateTime.minute * 6 * pi / 180);
+    final double minHandX = center.dx + minuteHandLength * cos(dateTime.minute * 6 * pi / 180);
+    final double minHandY = center.dy + minuteHandLength * sin(dateTime.minute * 6 * pi / 180);
     canvas.drawLine(center, Offset(minHandX, minHandY), minHandBrush);
 
     // Draw the second hand
-    var secHandX = center.dx + secondHandLength * cos(dateTime.second * 6 * pi / 180);
-    var secHandY = center.dy + secondHandLength * sin(dateTime.second * 6 * pi / 180);
+    final double secHandX = center.dx + secondHandLength * cos(dateTime.second * 6 * pi / 180);
+    final double secHandY = center.dy + secondHandLength * sin(dateTime.second * 6 * pi / 180);
     canvas.drawLine(center, Offset(secHandX, secHandY), secHandBrush);
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    var centerX = size.width / 2;
-    var centerY = size.height / 2;
-    var center = Offset(centerX, centerY);
-    var radius = min(centerX, centerY);
+    final double centerX = size.width / 2;
+    final double centerY = size.height / 2;
+    final Offset center = Offset(centerX, centerY);
+    final double radius = min(centerX, centerY);
 
     drawFace(canvas, center, radius);
     drawHands(canvas, center, radius * 0.8);
