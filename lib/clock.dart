@@ -11,11 +11,14 @@ class ClockView extends StatefulWidget {
 
 class _ClockViewState extends State<ClockView> {
   late Timer _timer;
+  var _time = DateTime.now();
 
   @override
   void initState() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
+      setState(() {
+        _time = DateTime.now();
+      });
     });
     super.initState();
   }

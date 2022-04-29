@@ -1,0 +1,47 @@
+name: Flutter
+
+# See https://github.com/marketplace/actions/flutter-action for usages
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule: # Build every day at 5PM UTC
+    - cron: '0 17 * * *'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+          os: [ macos-latest ]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Info
+      run: flutter --version
+
+    - name: Pub Get
+      run: flutter pub get
+
+    - name: Build macos version
+      if: matrix.os == 'macos-latest'
+      run: |
+        flutter config --enable-macos-desktop
+        flutter build macos
+
+    - name: Build web version (on mac)
+      if: matrix.os == 'macos-latest'
+      run: flutter build web
+
+    - name: test
+      run: flutter test
