@@ -1,5 +1,7 @@
 name: Flutter
 
+# See https://github.com/marketplace/actions/flutter-action for usages
+
 on:
   push:
     branches: [ master ]
