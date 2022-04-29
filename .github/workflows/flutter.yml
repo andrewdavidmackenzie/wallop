@@ -20,25 +20,25 @@ jobs:
           rust: [ stable ]
 
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
 
-      -name: Info
-        run: flutter --version
+    - name: Info
+      run: flutter --version
 
-      - name: Pub Get
-        run: flutter pub get
+    - name: Pub Get
+      run: flutter pub get
 
-      - name: Build macos version
-        if: matrix.os == 'macos-latest'
-        run: flutter build macos
+    - name: Build macos version
+      if: matrix.os == 'macos-latest'
+      run: flutter build macos
 
-      - name: Build web version (on mac)
-        if: matrix.os == 'macos-latest'
-        run: flutter build web
+    - name: Build web version (on mac)
+      if: matrix.os == 'macos-latest'
+      run: flutter build web
 
-      - name: test
-        run: flutter test
+    - name: test
+      run: flutter test
