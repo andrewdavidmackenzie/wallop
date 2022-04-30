@@ -42,17 +42,17 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> with TrayListener {
-  Tray tray = Tray();
+  final Tray _tray = Tray();
 
   @override
   void initState() {
-    tray.init(this);
+    _tray.init(this);
     super.initState();
   }
 
   @override
   void dispose() {
-    tray.dispose();
+    _tray.dispose();
     super.dispose();
   }
 
@@ -70,16 +70,16 @@ class _MainViewState extends State<MainView> with TrayListener {
 
   @override
   void onTrayIconMouseDown() {
-    tray.popUpContextMenu();
+    _tray.popUpContextMenu();
   }
 
   @override
   void onTrayIconRightMouseDown() {
-    tray.popUpContextMenu();
+    _tray.popUpContextMenu();
   }
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
-    tray.onTrayMenuItemClick(menuItem);
+    _tray.onTrayMenuItemClick(menuItem);
   }
 }

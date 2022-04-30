@@ -11,26 +11,26 @@ class ClockView extends StatefulWidget {
 
 class _ClockViewState extends State<ClockView> {
   late Timer _timer;
-  var _time = DateTime.now();
 
   @override
   void initState() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _time = DateTime.now();
-      });
+      setState(() {});
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    ClockPainter clockPainter = ClockPainter();
+    final ClockPainter clockPainter = ClockPainter();
     return SizedBox.expand(
-      child: Transform.rotate(
-        angle: -pi / 2,
-        child: CustomPaint(
-          painter: clockPainter,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Transform.rotate(
+          angle: -pi / 2,
+          child: CustomPaint(
+            painter: clockPainter,
+          ),
         ),
       ),
     );
@@ -44,9 +44,9 @@ class _ClockViewState extends State<ClockView> {
 }
 
 class ClockPainter extends CustomPainter {
-  var dateTime = DateTime.now();
+  final dateTime = DateTime.now();
 
-  void drawFace(Canvas canvas, Offset center, double radius) {
+  void _drawFace(Canvas canvas, Offset center, double radius) {
     // Concentric circles
     // - where tick marks end   - radius
     // - where tick marks start - dashCircleInnerRadius
@@ -91,7 +91,7 @@ class ClockPainter extends CustomPainter {
     }
   }
 
-  void drawHands(Canvas canvas, Offset center, double radius) {
+  void _drawHands(Canvas canvas, Offset center, double radius, DateTime time) {
     // Concentric circles
     final double secondHandLength = radius * 0.9;
     final double minuteHandLength = radius * 0.77;
@@ -123,19 +123,19 @@ class ClockPainter extends CustomPainter {
 
     // Draw the Hour hand
     final double hourHandX = center.dx +
-        hourHandLength * cos((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
+        hourHandLength * cos((time.hour * 30 + time.minute * 0.5) * pi / 180);
     final double hourHandY = center.dy +
-        hourHandLength * sin((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
+        hourHandLength * sin((time.hour * 30 + time.minute * 0.5) * pi / 180);
     canvas.drawLine(center, Offset(hourHandX, hourHandY), hourHandBrush);
 
     // Draw the minute hand
-    final double minHandX = center.dx + minuteHandLength * cos(dateTime.minute * 6 * pi / 180);
-    final double minHandY = center.dy + minuteHandLength * sin(dateTime.minute * 6 * pi / 180);
+    final double minHandX = center.dx + minuteHandLength * cos(time.minute * 6 * pi / 180);
+    final double minHandY = center.dy + minuteHandLength * sin(time.minute * 6 * pi / 180);
     canvas.drawLine(center, Offset(minHandX, minHandY), minHandBrush);
 
     // Draw the second hand
-    final double secHandX = center.dx + secondHandLength * cos(dateTime.second * 6 * pi / 180);
-    final double secHandY = center.dy + secondHandLength * sin(dateTime.second * 6 * pi / 180);
+    final double secHandX = center.dx + secondHandLength * cos(time.second * 6 * pi / 180);
+    final double secHandY = center.dy + secondHandLength * sin(time.second * 6 * pi / 180);
     canvas.drawLine(center, Offset(secHandX, secHandY), secHandBrush);
   }
 
@@ -146,8 +146,8 @@ class ClockPainter extends CustomPainter {
     final Offset center = Offset(centerX, centerY);
     final double radius = min(centerX, centerY);
 
-    drawFace(canvas, center, radius);
-    drawHands(canvas, center, radius * 0.8);
+    _drawFace(canvas, center, radius);
+    _drawHands(canvas, center, radius * 0.8, dateTime);
   }
 
   @override

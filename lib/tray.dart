@@ -12,21 +12,21 @@ import 'package:tray_manager/tray_manager.dart';
 
 class Tray {
 //  String _iconType = _kIconTypeOriginal;
-  late TrayListener listener;
+  late TrayListener _listener;
 
-  getOriginal() {
+  String getOriginal() {
     return Platform.isWindows
         ? 'images/tray_icon_original.ico'
         : 'images/tray_icon_original.png';
   }
 
-  getAlternative() {
+  String getAlternative() {
     return Platform.isWindows
         ? 'images/tray_icon.ico'
         : 'images/tray_icon.png';
   }
 
-  getMenuItems() {
+  List<MenuItem> getMenuItems() {
     return [
       MenuItem(title: 'Preferences'),
       MenuItem(title: 'Quit'),
@@ -41,19 +41,19 @@ class Tray {
   }
 
   void init(listener) {
-    this.listener = listener;
+    _listener = listener;
     trayManager.addListener(listener);
     trayManager.setIcon(getOriginal());
     trayManager.setContextMenu(getMenuItems());
   }
 
   void dispose() {
-    trayManager.removeListener(listener);
+    trayManager.removeListener(_listener);
   }
 
   void onTrayMenuItemClick(MenuItem menuItem) {
     switch (menuItem.title) {
-      case "Quit":
+      case 'Quit':
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       break;
 
