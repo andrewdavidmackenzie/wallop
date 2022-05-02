@@ -27,8 +27,7 @@ class _ClockViewState extends State<ClockView> {
 
   @override
   Widget build(BuildContext context) {
-    final ClockPainter clockPainter = ClockPainter();
-    clockPainter.setSecondHand(_secondHand);
+    final ClockPainter clockPainter = ClockPainter(_secondHand);
 
     return SizedBox.expand(
       child: Padding(
@@ -50,15 +49,32 @@ class _ClockViewState extends State<ClockView> {
   }
 }
 
-class ClockPainter extends CustomPainter {
-  final dateTime = DateTime.now();
-  bool _secondHand = true;
+enum EventType {
+  meeting
+}
 
-  void setSecondHand(bool secondHand) {
-    _secondHand = secondHand;
+class Event {
+  DateTime start;
+  DateTime end;
+  EventType type;
+
+  Event(this.start, this.end, {this.type = EventType.meeting});
+}
+
+class ClockPainter extends CustomPainter {
+  final _dateTime = DateTime.now();
+  final bool secondHand;
+  List<Event> _events = [Event(DateTime.now(),
+      DateTime.utc(DateTime.now().year, DateTime.now().day, DateTime.now().hour +1))];
+
+  ClockPainter(this.secondHand); // Drawing of second hand is optional
+
+  void setEvents(List<Event> events) {
+    _events = events;
   }
 
-  void _drawFace(Canvas canvas, Offset center, double radius) {
+  // Return the inner radius of the clock face where events can be drawn
+  double _drawFace(Canvas canvas, Offset center, double radius) {
     // Concentric circles
     // - where tick marks end   - radius
     // - where tick marks start - dashCircleInnerRadius
@@ -67,6 +83,7 @@ class ClockPainter extends CustomPainter {
     final double dashCircleInnerRadius = radius * 0.9;
     final double faceOutlineRadius = dashCircleInnerRadius * 0.9;
     final double centerDotRadius = faceOutlineRadius * 0.1;
+    final double faceOutlineWidth = centerDotRadius;
 
     // Draw the face background
     final Paint fillBrush = Paint()..color = const Color(0xFF444974);
@@ -76,7 +93,7 @@ class ClockPainter extends CustomPainter {
     final Paint outlineBrush = Paint()
       ..color = const Color(0xFFEAECFF)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = centerDotRadius;
+      ..strokeWidth = faceOutlineWidth;
     canvas.drawCircle(center, faceOutlineRadius, outlineBrush);
 
     // Draw the center dot
@@ -100,6 +117,55 @@ class ClockPainter extends CustomPainter {
       final double x2 = center.dx + dashCircleInnerRadius * cos(i * pi / 180);
       final double y2 = center.dy + dashCircleInnerRadius * sin(i * pi / 180);
       canvas.drawLine(Offset(x1, y1), Offset(x2, y2), dashBrush);
+    }
+
+    return faceOutlineRadius;
+  }
+
+  // Limit start and end to the 12h on the clock and avoid overlap of start and end
+  Event _wedgeFromEvent(Event event) {
+    return event;
+  }
+
+  Paint _brushFromEvent(Offset center, double radius, Event event) {
+    return Paint()
+      ..shader = const RadialGradient(colors: [Color(0xFFC5FFFA), Color(0xFF8BFFF7)])
+          .createShader(Rect.fromCircle(center: center, radius: radius))
+      ..style = PaintingStyle.fill
+      ..strokeCap = StrokeCap.square
+      ..strokeWidth = 1;
+  }
+
+  void _drawEvent(Canvas canvas, Offset center, double radius, Event event) {
+    // Convert event to a wedge
+    Event wedge = _wedgeFromEvent(event);
+
+    // Crate the Path from the Wedge
+    Path path = Path();
+    path.relativeMoveTo(center.dx, center.dy);
+
+    final double wedgeStartX = center.dx +
+        radius * cos((wedge.start.hour * 30 + wedge.start.minute * 0.5) * pi / 180);
+    final double wedgeStartY = center.dy +
+        radius * sin((wedge.start.hour * 30 + wedge.start.minute * 0.5) * pi / 180);
+    path.lineTo(wedgeStartX, wedgeStartY);
+
+    final double wedgeEndX = center.dx +
+        radius * cos((wedge.end.hour * 30 + wedge.end.minute * 0.5) * pi / 180);
+    final double wedgeEndY = center.dy +
+        radius * sin((wedge.end.hour * 30 + wedge.end.minute * 0.5) * pi / 180);
+    path.arcToPoint(Offset(wedgeEndX, wedgeEndY), radius: Radius.circular(radius));
+
+    path.close();
+
+    final Paint wedgeBrush = _brushFromEvent(center, radius, event);
+
+    canvas.drawPath(path, wedgeBrush);
+  }
+
+  void _drawEvents(Canvas canvas, Offset center, double radius, List<Event> events) {
+    for (Event event in events) {
+      _drawEvent(canvas, center, radius, event);
     }
   }
 
@@ -146,7 +212,7 @@ class ClockPainter extends CustomPainter {
     canvas.drawLine(center, Offset(minHandX, minHandY), minHandBrush);
 
     // Draw the second hand
-    if (_secondHand) {
+    if (secondHand) {
       final double secHandX = center.dx + secondHandLength * cos(time.second * 6 * pi / 180);
       final double secHandY = center.dy + secondHandLength * sin(time.second * 6 * pi / 180);
       canvas.drawLine(center, Offset(secHandX, secHandY), secHandBrush);
@@ -160,8 +226,9 @@ class ClockPainter extends CustomPainter {
     final Offset center = Offset(centerX, centerY);
     final double radius = min(centerX, centerY);
 
-    _drawFace(canvas, center, radius);
-    _drawHands(canvas, center, radius * 0.8, dateTime);
+    double faceRadius = _drawFace(canvas, center, radius);
+    _drawEvents(canvas, center, faceRadius, _events);
+    _drawHands(canvas, center, radius * 0.8, _dateTime);
   }
 
   @override
