@@ -3,14 +3,19 @@ import 'dart:async';
 import 'dart:math';
 
 class ClockView extends StatefulWidget {
-  const ClockView({Key? key}) : super(key: key);
+  final bool secondHand;
+
+  const ClockView({Key? key, this.secondHand=true}) : super(key: key);
 
   @override
-  _ClockViewState createState() => _ClockViewState();
+  _ClockViewState createState() => _ClockViewState(secondHand);
 }
 
 class _ClockViewState extends State<ClockView> {
   late Timer _timer;
+  final bool _secondHand;
+
+  _ClockViewState(this._secondHand);
 
   @override
   void initState() {
@@ -23,6 +28,8 @@ class _ClockViewState extends State<ClockView> {
   @override
   Widget build(BuildContext context) {
     final ClockPainter clockPainter = ClockPainter();
+    clockPainter.setSecondHand(_secondHand);
+
     return SizedBox.expand(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -45,6 +52,11 @@ class _ClockViewState extends State<ClockView> {
 
 class ClockPainter extends CustomPainter {
   final dateTime = DateTime.now();
+  bool _secondHand = true;
+
+  void setSecondHand(bool secondHand) {
+    _secondHand = secondHand;
+  }
 
   void _drawFace(Canvas canvas, Offset center, double radius) {
     // Concentric circles
@@ -134,9 +146,11 @@ class ClockPainter extends CustomPainter {
     canvas.drawLine(center, Offset(minHandX, minHandY), minHandBrush);
 
     // Draw the second hand
-    final double secHandX = center.dx + secondHandLength * cos(time.second * 6 * pi / 180);
-    final double secHandY = center.dy + secondHandLength * sin(time.second * 6 * pi / 180);
-    canvas.drawLine(center, Offset(secHandX, secHandY), secHandBrush);
+    if (_secondHand) {
+      final double secHandX = center.dx + secondHandLength * cos(time.second * 6 * pi / 180);
+      final double secHandY = center.dy + secondHandLength * sin(time.second * 6 * pi / 180);
+      canvas.drawLine(center, Offset(secHandX, secHandY), secHandBrush);
+    }
   }
 
   @override
