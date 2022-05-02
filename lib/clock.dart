@@ -129,7 +129,7 @@ class ClockPainter extends CustomPainter {
 
   Paint _brushFromEvent(Offset center, double radius, Event event) {
     return Paint()
-      ..shader = const RadialGradient(colors: [Color(0xFFC5FFFA), Color(0xFF8BFFF7)])
+      ..shader = const RadialGradient(colors: [Color(0x2FC5FFFA), Color(0x5F8BFFF7)])
           .createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.square
