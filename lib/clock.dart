@@ -64,8 +64,7 @@ class Event {
 class ClockPainter extends CustomPainter {
   final _dateTime = DateTime.now();
   final bool secondHand;
-  List<Event> _events = [Event(DateTime.now(),
-      DateTime.utc(DateTime.now().year, DateTime.now().day, DateTime.now().hour +1))];
+  List<Event> _events = [Event(DateTime.now(), DateTime.now().add(const Duration(hours: 1)))];
 
   ClockPainter(this.secondHand); // Drawing of second hand is optional
 
@@ -123,6 +122,8 @@ class ClockPainter extends CustomPainter {
   }
 
   // Limit start and end to the 12h on the clock and avoid overlap of start and end
+  // post conditions:
+  //  - end time must be after start time, but less than 12h after it
   Event _wedgeFromEvent(Event event) {
     return event;
   }
@@ -154,7 +155,8 @@ class ClockPainter extends CustomPainter {
         radius * cos((wedge.end.hour * 30 + wedge.end.minute * 0.5) * pi / 180);
     final double wedgeEndY = center.dy +
         radius * sin((wedge.end.hour * 30 + wedge.end.minute * 0.5) * pi / 180);
-    path.arcToPoint(Offset(wedgeEndX, wedgeEndY), radius: Radius.circular(radius));
+    path.arcToPoint(Offset(wedgeEndX, wedgeEndY),
+        radius: Radius.circular(radius), clockwise: true);
 
     path.close();
 
