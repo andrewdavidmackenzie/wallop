@@ -5,7 +5,7 @@ import 'dart:math';
 class ClockView extends StatefulWidget {
   final bool secondHand;
 
-  const ClockView({Key? key, required this.secondHand}) : super(key: key);
+  const ClockView({Key? key, this.secondHand=true}) : super(key: key);
 
   @override
   _ClockViewState createState() => _ClockViewState(secondHand);

@@ -63,9 +63,7 @@ class _MainViewState extends State<MainView> with TrayListener {
         child: Container(
           alignment: Alignment.center,
           color: const Color(0xFF2D2F41),
-          child: const ClockView(
-              secondHand: false
-          ),
+          child: const ClockView(),
         ),
       );
   }
