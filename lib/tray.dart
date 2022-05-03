@@ -1,29 +1,14 @@
-//import 'dart:async';
 import 'dart:io';
-
-//import 'package:flutter/material.dart';
 //import 'package:preference_list/preference_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:tray_manager/tray_manager.dart';
 
-//const _kIconTypeDefault = 'default';
-//const _kIconTypeOriginal = 'original';
-
-class Tray {
-//  String _iconType = _kIconTypeOriginal;
-  late TrayListener _listener;
-
-  String getOriginal() {
+class Tray with TrayListener {
+  String getIcon() {
     return Platform.isWindows
         ? 'images/tray_icon_original.ico'
         : 'images/tray_icon_original.png';
-  }
-
-  String getAlternative() {
-    return Platform.isWindows
-        ? 'images/tray_icon.ico'
-        : 'images/tray_icon.png';
   }
 
   List<MenuItem> getMenuItems() {
@@ -40,19 +25,22 @@ class Tray {
     ];
   }
 
-  void init(listener) {
-    _listener = listener;
-    trayManager.addListener(listener);
-    trayManager.setIcon(getOriginal());
+  void init() {
+    trayManager.addListener(this);
+    trayManager.setIcon(getIcon());
     trayManager.setContextMenu(getMenuItems());
   }
 
   void dispose() {
-    trayManager.removeListener(_listener);
+    trayManager.removeListener(this);
   }
 
+  @override
   void onTrayMenuItemClick(MenuItem menuItem) {
     switch (menuItem.title) {
+      case 'Preferences':
+        break;
+
       case 'Quit':
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       break;
@@ -65,40 +53,16 @@ class Tray {
     }
   }
 
-  void popUpContextMenu() {
+  @override
+  void onTrayIconMouseDown() {
     trayManager.popUpContextMenu();
   }
 
-  //
-  // void _handleSetIcon(String iconType) async {
-  //   _iconType = iconType;
-  //   String iconPath = getAlternative();
-  //
-  //   if (_iconType == 'original') {
-  //     iconPath = getOriginal();
-  //   }
-  //
-  //   await trayManager.setIcon(iconPath);
-  // }
-  //
-  // void _startIconFlashing() {
-  //   _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-  //     _handleSetIcon(_iconType == _kIconTypeOriginal
-  //         ? _kIconTypeDefault
-  //         : _kIconTypeOriginal);
-  //   });
-  //   setState(() {});
-  // }
-  //
-  // void _stopIconFlashing() {
-  //   if (_timer != null && _timer!.isActive) {
-  //     _timer!.cancel();
-  //   }
-  //   setState(() {});
-  // }
-
+  @override
+  void onTrayIconRightMouseDown() {
+    trayManager.popUpContextMenu();
+  }
 }
-
 
 // Widget _buildBody(BuildContext context) {
 //   return PreferenceList(
