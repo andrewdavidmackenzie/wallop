@@ -62,7 +62,7 @@ class _MainViewState extends State<MainView> {
         child: Container(
           alignment: Alignment.center,
           color: const Color(0xFF2D2F41),
-          child: const ClockView(),
+          child: ClockView(),
         ),
       );
   }
