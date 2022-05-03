@@ -5,11 +5,9 @@ import './event.dart';
 
 class ClockView extends StatefulWidget {
   final bool secondHand;
-  List<Event> events = [
-//    Event(DateTime.now().add(const Duration(minutes: 15)), DateTime.now().add(const Duration(hours: 1)))
-  ];
+  final List<Event> events;
 
-  ClockView({Key? key, this.secondHand = false}) : super(key: key);
+  const ClockView({Key? key, this.secondHand = false, this.events = const []}) : super(key: key);
 
   @override
   _ClockViewState createState() => _ClockViewState();

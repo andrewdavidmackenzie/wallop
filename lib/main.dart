@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './tray.dart';
 import './clock.dart';
+import 'event.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +56,10 @@ class _MainViewState extends State<MainView> {
     super.dispose();
   }
 
+  List<Event> events = [
+//    Event(DateTime.now().add(const Duration(minutes: 15)), DateTime.now().add(const Duration(hours: 1)))
+  ];
+
   @override
   Widget build(BuildContext context) {
     return
@@ -62,7 +67,7 @@ class _MainViewState extends State<MainView> {
         child: Container(
           alignment: Alignment.center,
           color: const Color(0xFF2D2F41),
-          child: ClockView(),
+          child: const ClockView(),
         ),
       );
   }
