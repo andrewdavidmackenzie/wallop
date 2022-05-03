@@ -8,14 +8,11 @@ class ClockView extends StatefulWidget {
   const ClockView({Key? key, this.secondHand = false}) : super(key: key);
 
   @override
-  _ClockViewState createState() => _ClockViewState(secondHand);
+  _ClockViewState createState() => _ClockViewState();
 }
 
 class _ClockViewState extends State<ClockView> {
   late Timer _timer;
-  final bool _secondHand;
-
-  _ClockViewState(this._secondHand);
 
   @override
   void initState() {
@@ -27,7 +24,7 @@ class _ClockViewState extends State<ClockView> {
 
   @override
   Widget build(BuildContext context) {
-    final ClockPainter clockPainter = ClockPainter(_secondHand);
+    final ClockPainter clockPainter = ClockPainter(widget.secondHand);
 
     return SizedBox.expand(
       child: Padding(
