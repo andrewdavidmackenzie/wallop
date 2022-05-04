@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tray_manager/tray_manager.dart';
 
 import './tray.dart';
 import './clock.dart';
+import 'event.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,12 +41,12 @@ class MainView extends StatefulWidget {
   _MainViewState createState() => _MainViewState();
 }
 
-class _MainViewState extends State<MainView> with TrayListener {
+class _MainViewState extends State<MainView> {
   final Tray _tray = Tray();
 
   @override
   void initState() {
-    _tray.init(this);
+    _tray.init();
     super.initState();
   }
 
@@ -55,6 +55,10 @@ class _MainViewState extends State<MainView> with TrayListener {
     _tray.dispose();
     super.dispose();
   }
+
+  List<Event> events = [
+//    Event(DateTime.now().add(const Duration(minutes: 15)), DateTime.now().add(const Duration(hours: 1)))
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -66,20 +70,5 @@ class _MainViewState extends State<MainView> with TrayListener {
           child: const ClockView(),
         ),
       );
-  }
-
-  @override
-  void onTrayIconMouseDown() {
-    _tray.popUpContextMenu();
-  }
-
-  @override
-  void onTrayIconRightMouseDown() {
-    _tray.popUpContextMenu();
-  }
-
-  @override
-  void onTrayMenuItemClick(MenuItem menuItem) {
-    _tray.onTrayMenuItemClick(menuItem);
   }
 }

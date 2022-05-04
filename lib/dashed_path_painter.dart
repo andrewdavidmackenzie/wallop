@@ -3,6 +3,82 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+
+/*
+Example usage of this...
+
+const Color darkBlue = Color.fromARGB(255, 18, 32, 47);
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: darkBlue,
+      ),
+      debugShowCheckedModeBanner: false,
+      home: const Scaffold(
+        body: Center(
+          child: ExampleDashedPath(),
+        ),
+      ),
+    );
+  }
+}
+
+class ExampleDashedPath extends StatelessWidget {
+  const ExampleDashedPath({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 50),
+        CustomPaint(
+          painter: DashedPathPainter(
+            originalPath: Path()..lineTo(100, 0),
+            pathColor: Colors.red,
+            strokeWidth: 5.0,
+            dashGapLength: 10.0,
+            dashLength: 10.0,
+          ),
+          size: const Size(100.0, 2.0),
+        ),
+        const SizedBox(height: 50),
+        CustomPaint(
+          painter: DashedPathPainter(
+            originalPath: Path()
+              ..addOval(
+                const Rect.fromLTWH(0, 0, 100, 100),
+              ),
+            pathColor: Colors.white,
+          ),
+          size: const Size(100.0, 100.0),
+        ),
+        const SizedBox(height: 50),
+        CustomPaint(
+          painter: DashedPathPainter(
+            originalPath: Path()
+              ..addRect(
+                const Rect.fromLTWH(0, 0, 100, 100),
+              )
+              ..lineTo(100, 100),
+            pathColor: Colors.grey,
+            strokeWidth: 2.0,
+            dashLength: 25.0,
+          ),
+          size: const Size(100.0, 100.0),
+        ),
+      ],
+    );
+  }
+}
+ */
+
 class DashedPathPainter extends CustomPainter {
   final Path originalPath;
   final Color pathColor;

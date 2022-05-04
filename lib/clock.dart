@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
+import './event.dart';
 
 class ClockView extends StatefulWidget {
   final bool secondHand;
+  final List<Event> events;
 
-  const ClockView({Key? key, this.secondHand = false}) : super(key: key);
+  const ClockView({Key? key, this.secondHand = false, this.events = const []}) : super(key: key);
 
   @override
-  _ClockViewState createState() => _ClockViewState(secondHand);
+  _ClockViewState createState() => _ClockViewState();
 }
 
 class _ClockViewState extends State<ClockView> {
   late Timer _timer;
-  final bool _secondHand;
-
-  _ClockViewState(this._secondHand);
 
   @override
   void initState() {
@@ -27,8 +26,8 @@ class _ClockViewState extends State<ClockView> {
 
   @override
   Widget build(BuildContext context) {
-    final ClockPainter clockPainter = ClockPainter(_secondHand);
-
+    final ClockPainter clockPainter = ClockPainter(widget.secondHand);
+    clockPainter.setEvents(widget.events);
     return SizedBox.expand(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -46,90 +45,6 @@ class _ClockViewState extends State<ClockView> {
   }
 }
 
-enum EventType { meeting }
-
-class Event {
-  DateTime start;
-  DateTime end;
-  EventType type;
-
-  Event(this.start, this.end, {this.type = EventType.meeting});
-}
-
-/*
-
-const Color darkBlue = Color.fromARGB(255, 18, 32, 47);
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: darkBlue,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: const Scaffold(
-        body: Center(
-          child: ExampleDashedPath(),
-        ),
-      ),
-    );
-  }
-}
-
-class ExampleDashedPath extends StatelessWidget {
-  const ExampleDashedPath({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 50),
-        CustomPaint(
-          painter: DashedPathPainter(
-            originalPath: Path()..lineTo(100, 0),
-            pathColor: Colors.red,
-            strokeWidth: 5.0,
-            dashGapLength: 10.0,
-            dashLength: 10.0,
-          ),
-          size: const Size(100.0, 2.0),
-        ),
-        const SizedBox(height: 50),
-        CustomPaint(
-          painter: DashedPathPainter(
-            originalPath: Path()
-              ..addOval(
-                const Rect.fromLTWH(0, 0, 100, 100),
-              ),
-            pathColor: Colors.white,
-          ),
-          size: const Size(100.0, 100.0),
-        ),
-        const SizedBox(height: 50),
-        CustomPaint(
-          painter: DashedPathPainter(
-            originalPath: Path()
-              ..addRect(
-                const Rect.fromLTWH(0, 0, 100, 100),
-              )
-              ..lineTo(100, 100),
-            pathColor: Colors.grey,
-            strokeWidth: 2.0,
-            dashLength: 25.0,
-          ),
-          size: const Size(100.0, 100.0),
-        ),
-      ],
-    );
-  }
-}
- */
-
 class ClockPainter extends CustomPainter {
   static const hourColor = Color(0xFFC279FB);
   static const minuteColor = Color(0xFF77DDFF);
@@ -137,10 +52,7 @@ class ClockPainter extends CustomPainter {
 
   final _dateTime = DateTime.now();
   final bool secondHand;
-  List<Event> _events = [
-//    Event(DateTime.now().add(const Duration(minutes: 15)), DateTime.now().add(const Duration(hours: 1)))
-  ];
-
+  List<Event> _events = [];
   ClockPainter(this.secondHand); // Drawing of second hand is optional
 
   void setEvents(List<Event> events) {
