@@ -62,13 +62,6 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      SizedBox.expand(
-        child: Container(
-          alignment: Alignment.center,
-          color: const Color(0xFF2D2F41),
-          child: const ClockView(),
-        ),
-      );
+    return const ClockView();
   }
 }
