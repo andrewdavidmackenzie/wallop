@@ -18,9 +18,11 @@ class _ClockViewState extends State<ClockView> {
 
   @override
   void initState() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    });
+    if (widget.secondHand) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {setState(() {});});
+    } else {
+      _timer = Timer.periodic(const Duration(minutes: 1), (timer) {setState(() {});});
+    }
     super.initState();
   }
 
