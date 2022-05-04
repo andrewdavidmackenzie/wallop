@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import './event.dart';
+import '../models/event.dart';
 
 class ClockView extends StatefulWidget {
   final bool secondHand;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import './tray.dart';
-import './clock.dart';
-import 'event.dart';
+import 'utils/tray.dart';
+import 'widgets/clock.dart';
+import 'models/event.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
