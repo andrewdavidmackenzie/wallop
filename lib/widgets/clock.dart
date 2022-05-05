@@ -62,6 +62,8 @@ class ClockPainter extends CustomPainter {
     TextStyle textStyle = TextStyle(
       color: color,
       fontSize: size,
+      letterSpacing: -0.02,
+      leadingDistribution: TextLeadingDistribution.even
     );
     TextSpan textSpan = TextSpan(
       text: text,
@@ -70,15 +72,11 @@ class ClockPainter extends CustomPainter {
     final textPainter = TextPainter(
         text: textSpan,
         textDirection: TextDirection.ltr,
-        textAlign: TextAlign.center
+        textAlign: TextAlign.center,
     );
-    textPainter.layout(
-      minWidth: 0,
-      maxWidth: size * 2,
-    );
-    double textX = position.dx - textPainter.width/2;
-    double textY = position.dy - textPainter.height/2;
-    textPainter.paint(canvas, Offset(textX, textY));
+    textPainter.layout();
+    // We want text centered at position so we move text origin by half w/h
+    textPainter.paint(canvas, Offset(position.dx - (textPainter.width/2.0), position.dy + 0.07));
   }
 
   double _hoursAndMinutesToAngle(int hour, int minutes) {
@@ -94,16 +92,12 @@ class ClockPainter extends CustomPainter {
   }
 
   // Return the inner radius of the clock face where events can be drawn
-  double _drawFace(Canvas canvas, double radius) {
+  double _drawFace(Canvas canvas) {
     // Concentric circles
-    // - where tick marks end   - radius
-    // - where tick marks start - dashCircleInnerRadius
-    // - face circle            - faceOutlineRadius
-    // - center dot             - centerDotRadius
-    final double dashCircleInnerRadius = radius * 0.9;
-    final double faceOutlineRadius = dashCircleInnerRadius * 0.9;
-    final double centerDotRadius = faceOutlineRadius * 0.1;
-    final double faceOutlineWidth = centerDotRadius;
+    const double dashCircleInnerRadius = 0.9;
+    const double faceOutlineRadius = dashCircleInnerRadius * 0.9;
+    const double centerDotRadius = faceOutlineRadius * 0.1;
+    const double faceOutlineWidth = centerDotRadius;
 
     // Draw the face background
     final Paint fillBrush = Paint()..color = const Color(0xFF444974);
@@ -121,7 +115,7 @@ class ClockPainter extends CustomPainter {
     canvas.drawCircle(Offset.zero, centerDotRadius, centerDotBrush);
 
     // Draw all the marks around the outside
-    final double dashWidth = radius * 0.005;
+    const double dashWidth = 0.005;
     final Paint dashBrush = Paint()
       ..color = tickColor
       ..style = PaintingStyle.stroke
@@ -130,15 +124,15 @@ class ClockPainter extends CustomPainter {
 
     for (int hour = 1; hour < 13; hour += 1) {
       // They end touching the outermost circle of radius `outerCircleRadius`
-      final double x1 = radius * cos(_hoursAndMinutesToAngle(hour, 0));
-      final double y1 = radius * sin(_hoursAndMinutesToAngle(hour, 0));
+      final double x1 = cos(_hoursAndMinutesToAngle(hour, 0));
+      final double y1 = sin(_hoursAndMinutesToAngle(hour, 0));
 
       // They start at the `dashCircleInnerRadius`
       final double x2 = dashCircleInnerRadius * cos(_hoursAndMinutesToAngle(hour, 0));
       final double y2 = dashCircleInnerRadius * sin(_hoursAndMinutesToAngle(hour, 0));
 
       if (_dateTime.hour % 12 == hour) {
-        _drawTextAt(canvas, hour.toString(), Offset((x1+x2)/2, (y1+y2)/2), 50, hourColor);
+        _drawTextAt(canvas, hour.toString(), Offset((x1+x2)/2, (y1+y2)/2), 0.2, hourColor);
       } else {
         canvas.drawLine(Offset(x1, y1), Offset(x2, y2), dashBrush);
       }
@@ -317,13 +311,15 @@ class ClockPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final double centerX = size.width / 2;
     final double centerY = size.height / 2;
-    final double radius = min(centerX, centerY);
+    double radius = min(centerX, centerY);
 
     canvas.translate(centerX, centerY);
-    double faceRadius = _drawFace(canvas, radius);
+    canvas.scale(radius);
+
+    double faceRadius = _drawFace(canvas);
     _drawEvents(canvas, faceRadius, _events);
     _drawRemaining(canvas, faceRadius * 0.75, _dateTime, _events);
-    _drawTime(canvas, radius * 0.8, _dateTime);
+    _drawTime(canvas, 0.8, _dateTime);
   }
 
   @override
