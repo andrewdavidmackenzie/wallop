@@ -313,6 +313,8 @@ class ClockPainter extends CustomPainter {
     final double centerY = size.height / 2;
     double radius = min(centerX, centerY);
 
+    canvas.drawPaint(Paint()
+      ..color = Colors.black);
     canvas.translate(centerX, centerY);
     canvas.scale(radius);
 
