@@ -11,7 +11,7 @@ class Tray with TrayListener {
         : 'images/tray_icon_original.png';
   }
 
-  List<MenuItem> getMenuItems() {
+  List<MenuItem> _getMenuItems() {
     return [
       MenuItem(title: 'Preferences'),
       MenuItem(title: 'Quit'),
@@ -26,13 +26,17 @@ class Tray with TrayListener {
   }
 
   void init() {
-    trayManager.addListener(this);
-    trayManager.setIcon(getIcon());
-    trayManager.setContextMenu(getMenuItems());
+    if (Platform.isMacOS) {
+      trayManager.addListener(this);
+      trayManager.setIcon(getIcon());
+      trayManager.setContextMenu(_getMenuItems());
+    }
   }
 
   void dispose() {
-    trayManager.removeListener(this);
+    if (Platform.isMacOS) {
+      trayManager.removeListener(this);
+    }
   }
 
   @override
