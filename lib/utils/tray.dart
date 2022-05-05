@@ -26,17 +26,13 @@ class Tray with TrayListener {
   }
 
   void init() {
-    if (Platform.isMacOS) {
-      trayManager.addListener(this);
-      trayManager.setIcon(getIcon());
-      trayManager.setContextMenu(_getMenuItems());
-    }
+    trayManager.addListener(this);
+    trayManager.setIcon(getIcon());
+    trayManager.setContextMenu(_getMenuItems());
   }
 
   void dispose() {
-    if (Platform.isMacOS) {
-      trayManager.removeListener(this);
-    }
+    trayManager.removeListener(this);
   }
 
   @override
