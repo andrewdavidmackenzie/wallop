@@ -94,7 +94,7 @@ class ClockPainter extends CustomPainter {
   }
 
   // Return the inner radius of the clock face where events can be drawn
-  double _drawFace(Canvas canvas, Offset center, double radius) {
+  double _drawFace(Canvas canvas, double radius) {
     // Concentric circles
     // - where tick marks end   - radius
     // - where tick marks start - dashCircleInnerRadius
@@ -107,18 +107,18 @@ class ClockPainter extends CustomPainter {
 
     // Draw the face background
     final Paint fillBrush = Paint()..color = const Color(0xFF444974);
-    canvas.drawCircle(center, faceOutlineRadius, fillBrush);
+    canvas.drawCircle(Offset.zero, faceOutlineRadius, fillBrush);
 
     // draw the outline circle to the center area
     final Paint outlineBrush = Paint()
       ..color = const Color(0xFFEAECFF)
       ..style = PaintingStyle.stroke
       ..strokeWidth = faceOutlineWidth;
-    canvas.drawCircle(center, faceOutlineRadius, outlineBrush);
+    canvas.drawCircle(Offset.zero, faceOutlineRadius, outlineBrush);
 
     // Draw the center dot
     final Paint centerDotBrush = Paint()..color = const Color(0xFFEAECFF);
-    canvas.drawCircle(center, centerDotRadius, centerDotBrush);
+    canvas.drawCircle(Offset.zero, centerDotRadius, centerDotBrush);
 
     // Draw all the marks around the outside
     final double dashWidth = radius * 0.005;
@@ -130,14 +130,12 @@ class ClockPainter extends CustomPainter {
 
     for (int hour = 1; hour < 13; hour += 1) {
       // They end touching the outermost circle of radius `outerCircleRadius`
-      final double x1 = center.dx + radius * cos(_hoursAndMinutesToAngle(hour, 0));
-      final double y1 = center.dy + radius * sin(_hoursAndMinutesToAngle(hour, 0));
+      final double x1 = radius * cos(_hoursAndMinutesToAngle(hour, 0));
+      final double y1 = radius * sin(_hoursAndMinutesToAngle(hour, 0));
 
       // They start at the `dashCircleInnerRadius`
-      final double x2 =
-          center.dx + dashCircleInnerRadius * cos(_hoursAndMinutesToAngle(hour, 0));
-      final double y2 =
-          center.dy + dashCircleInnerRadius * sin(_hoursAndMinutesToAngle(hour, 0));
+      final double x2 = dashCircleInnerRadius * cos(_hoursAndMinutesToAngle(hour, 0));
+      final double y2 = dashCircleInnerRadius * sin(_hoursAndMinutesToAngle(hour, 0));
 
       if (_dateTime.hour % 12 == hour) {
         _drawTextAt(canvas, hour.toString(), Offset((x1+x2)/2, (y1+y2)/2), 50, hourColor);
@@ -156,11 +154,11 @@ class ClockPainter extends CustomPainter {
     return event;
   }
 
-  Paint _brushFromEvent(Offset center, double radius, Event event) {
+  Paint _brushFromEvent(double radius, Event event) {
     return Paint()
       ..shader =
           const RadialGradient(colors: [Color(0x2FC5FFFA), Color(0x5F8BFFF7)])
-              .createShader(Rect.fromCircle(center: center, radius: radius))
+              .createShader(Rect.fromCircle(center: Offset.zero, radius: radius))
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.square
       ..strokeWidth = 1;
@@ -169,20 +167,16 @@ class ClockPainter extends CustomPainter {
   // pre-conditions:
   //  - event.start is *after* from
   void _drawRemainingMinutes(
-      Canvas canvas, Offset center, double radius, DateTime from, Event event) {
+      Canvas canvas, double radius, DateTime from, Event event) {
     Path path = Path();
 
-    final double minHandX =
-        center.dx + radius * cos(_minutesToAngle(from.minute));
-    final double minHandY =
-        center.dy + radius * sin(_minutesToAngle(from.minute));
+    final double minHandX = radius * cos(_minutesToAngle(from.minute));
+    final double minHandY = radius * sin(_minutesToAngle(from.minute));
     path.relativeMoveTo(minHandX, minHandY);
 
     bool largeArc = ((from.minute + 30) % 60) < event.start.minute;
-    final double arcEndX =
-        center.dx + radius * cos(_minutesToAngle(event.start.minute));
-    final double arcEndY =
-        center.dy + radius * sin(_minutesToAngle(event.start.minute));
+    final double arcEndX = radius * cos(_minutesToAngle(event.start.minute));
+    final double arcEndY = radius * sin(_minutesToAngle(event.start.minute));
     path.arcToPoint(Offset(arcEndX, arcEndY),
         radius: Radius.circular(radius),
         largeArc: largeArc,
@@ -200,19 +194,15 @@ class ClockPainter extends CustomPainter {
   // pre-conditions:
   //  - event.start is *after* from
   void _drawRemainingHours(
-      Canvas canvas, Offset center, double radius, DateTime from, Event event) {
+      Canvas canvas, double radius, DateTime from, Event event) {
     Path path = Path();
 
-    final double hourHandX = center.dx +
-        radius * cos(_hoursAndMinutesToAngle(from.hour, from.minute));
-    final double hourHandY = center.dy +
-        radius * sin(_hoursAndMinutesToAngle(from.hour, from.minute));
+    final double hourHandX = radius * cos(_hoursAndMinutesToAngle(from.hour, from.minute));
+    final double hourHandY = radius * sin(_hoursAndMinutesToAngle(from.hour, from.minute));
     path.relativeMoveTo(hourHandX, hourHandY);
 
-    final double arcEndX = center.dx +
-        radius * cos(_hoursAndMinutesToAngle(event.start.hour, event.start.minute));
-    final double arcEndY = center.dy +
-        radius * sin(_hoursAndMinutesToAngle(event.start.hour, event.start.minute));
+    final double arcEndX = radius * cos(_hoursAndMinutesToAngle(event.start.hour, event.start.minute));
+    final double arcEndY = radius * sin(_hoursAndMinutesToAngle(event.start.hour, event.start.minute));
     path.arcToPoint(Offset(arcEndX, arcEndY),
         radius: Radius.circular(radius), clockwise: true);
 
@@ -228,56 +218,52 @@ class ClockPainter extends CustomPainter {
   // Draw a UI element to visually communicate how much time remains until
   // an upcoming event
   void _drawRemaining(
-      Canvas canvas, Offset center, double radius, DateTime from, List<Event> events) {
+      Canvas canvas, double radius, DateTime from, List<Event> events) {
     if (events.isNotEmpty){
       if (from.add(const Duration(minutes: 60)).isAfter(events[0].start) && true) {
       // less that 60 minutes until the event
-      _drawRemainingMinutes(canvas, center, radius, from, events[0]);
+      _drawRemainingMinutes(canvas, radius, from, events[0]);
       } else {
       // more than 60minutes until the event
-      _drawRemainingHours(canvas, center, radius * 0.7, from, events[0]);
+      _drawRemainingHours(canvas, radius * 0.7, from, events[0]);
       }
     }
   }
 
-  void _drawEvent(Canvas canvas, Offset center, double radius, Event event) {
+  void _drawEvent(Canvas canvas, double radius, Event event) {
     // Convert event to a wedge
     Event wedge = _wedgeFromEvent(event);
 
     // Crate the Path from the Wedge
     Path path = Path();
-    path.relativeMoveTo(center.dx, center.dy);
+    path.relativeMoveTo(0, 0);
 
-    final double wedgeStartX = center.dx +
-        radius *
+    final double wedgeStartX = radius *
             cos(_hoursAndMinutesToAngle(wedge.start.hour, wedge.start.minute));
-    final double wedgeStartY = center.dy +
-        radius *
+    final double wedgeStartY = radius *
             sin(_hoursAndMinutesToAngle(wedge.start.hour, wedge.start.minute));
     path.lineTo(wedgeStartX, wedgeStartY);
 
-    final double wedgeEndX = center.dx +
-        radius * cos(_hoursAndMinutesToAngle(wedge.end.hour, wedge.end.minute));
-    final double wedgeEndY = center.dy +
-        radius * sin(_hoursAndMinutesToAngle(wedge.end.hour, wedge.end.minute));
+    final double wedgeEndX = radius * cos(_hoursAndMinutesToAngle(wedge.end.hour, wedge.end.minute));
+    final double wedgeEndY = radius * sin(_hoursAndMinutesToAngle(wedge.end.hour, wedge.end.minute));
     path.arcToPoint(Offset(wedgeEndX, wedgeEndY),
         radius: Radius.circular(radius), clockwise: true);
 
     path.close();
 
-    final Paint wedgeBrush = _brushFromEvent(center, radius, event);
+    final Paint wedgeBrush = _brushFromEvent(radius, event);
 
     canvas.drawPath(path, wedgeBrush);
   }
 
   void _drawEvents(
-      Canvas canvas, Offset center, double radius, List<Event> events) {
+      Canvas canvas, double radius, List<Event> events) {
     for (Event event in events) {
-      _drawEvent(canvas, center, radius, event);
+      _drawEvent(canvas, radius, event);
     }
   }
 
-  void _drawTime(Canvas canvas, Offset center, double radius, DateTime time) {
+  void _drawTime(Canvas canvas, double radius, DateTime time) {
     // Concentric circles
     final double secondHandLength = radius * 0.9;
     final double minuteHandLength = radius * 0.77;
@@ -296,7 +282,7 @@ class ClockPainter extends CustomPainter {
     final Paint minHandBrush = Paint()
       ..shader =
           const RadialGradient(colors: [Color(0xFF748EF6), minuteColor])
-              .createShader(Rect.fromCircle(center: center, radius: radius))
+              .createShader(Rect.fromCircle(center: Offset.zero, radius: radius))
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = minuteHandWidth;
@@ -304,32 +290,26 @@ class ClockPainter extends CustomPainter {
     final Paint hourHandBrush = Paint()
       ..shader =
           const RadialGradient(colors: [Color(0xFFEA74AB), hourColor])
-              .createShader(Rect.fromCircle(center: center, radius: radius))
+              .createShader(Rect.fromCircle(center: Offset.zero, radius: radius))
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = hourHandWidth;
 
     // Draw the Hour hand
-    final double hourHandX = center.dx +
-        hourHandLength * cos(_hoursAndMinutesToAngle(time.hour, time.minute));
-    final double hourHandY = center.dy +
-        hourHandLength * sin(_hoursAndMinutesToAngle(time.hour, time.minute));
-    canvas.drawLine(center, Offset(hourHandX, hourHandY), hourHandBrush);
+    final double hourHandX = hourHandLength * cos(_hoursAndMinutesToAngle(time.hour, time.minute));
+    final double hourHandY = hourHandLength * sin(_hoursAndMinutesToAngle(time.hour, time.minute));
+    canvas.drawLine(Offset.zero, Offset(hourHandX, hourHandY), hourHandBrush);
 
     // Draw the minute hand
-    final double minHandX =
-        center.dx + minuteHandLength * cos(_minutesToAngle(time.minute));
-    final double minHandY =
-        center.dy + minuteHandLength * sin(_minutesToAngle(time.minute));
-    canvas.drawLine(center, Offset(minHandX, minHandY), minHandBrush);
+    final double minHandX = minuteHandLength * cos(_minutesToAngle(time.minute));
+    final double minHandY = minuteHandLength * sin(_minutesToAngle(time.minute));
+    canvas.drawLine(Offset.zero, Offset(minHandX, minHandY), minHandBrush);
 
     // Draw the second hand
     if (secondHand) {
-      final double secHandX =
-          center.dx + secondHandLength * cos(_secondsToAngle(time.second));
-      final double secHandY =
-          center.dy + secondHandLength * sin(_secondsToAngle(time.second));
-      canvas.drawLine(center, Offset(secHandX, secHandY), secHandBrush);
+      final double secHandX = secondHandLength * cos(_secondsToAngle(time.second));
+      final double secHandY = secondHandLength * sin(_secondsToAngle(time.second));
+      canvas.drawLine(Offset.zero, Offset(secHandX, secHandY), secHandBrush);
     }
   }
 
@@ -337,13 +317,13 @@ class ClockPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final double centerX = size.width / 2;
     final double centerY = size.height / 2;
-    final Offset center = Offset(centerX, centerY);
     final double radius = min(centerX, centerY);
 
-    double faceRadius = _drawFace(canvas, center, radius);
-    _drawEvents(canvas, center, faceRadius, _events);
-    _drawRemaining(canvas, center, faceRadius * 0.75, _dateTime, _events);
-    _drawTime(canvas, center, radius * 0.8, _dateTime);
+    canvas.translate(centerX, centerY);
+    double faceRadius = _drawFace(canvas, radius);
+    _drawEvents(canvas, faceRadius, _events);
+    _drawRemaining(canvas, faceRadius * 0.75, _dateTime, _events);
+    _drawTime(canvas, radius * 0.8, _dateTime);
   }
 
   @override
