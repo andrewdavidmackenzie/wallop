@@ -34,14 +34,9 @@ class _Wallop extends State<Wallop> {
 
   @override
   Widget build(BuildContext context) {
-    MaterialApp app = MaterialApp(
-      title: 'Wallop',
+    MaterialApp app = const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const ClockView(),
+      home: ClockView(),
     );
 
     return app;
