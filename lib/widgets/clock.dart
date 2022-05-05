@@ -18,9 +18,7 @@ class _ClockViewState extends State<ClockView> {
 
   @override
   void initState() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {setState(() {});});
     super.initState();
   }
 
@@ -232,13 +230,13 @@ class ClockPainter extends CustomPainter {
   void _drawRemaining(
       Canvas canvas, Offset center, double radius, DateTime from, List<Event> events) {
     if (events.isNotEmpty){
-  //    if (from.add(const Duration(minutes: 60)).isAfter(event.start) && true) {
+      if (from.add(const Duration(minutes: 60)).isAfter(events[0].start) && true) {
       // less that 60 minutes until the event
       _drawRemainingMinutes(canvas, center, radius, from, events[0]);
-  //    } else {
+      } else {
       // more than 60minutes until the event
       _drawRemainingHours(canvas, center, radius * 0.7, from, events[0]);
-  //    }
+      }
     }
   }
 
@@ -349,7 +347,7 @@ class ClockPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
+  bool shouldRepaint(ClockPainter oldDelegate) {
     return true;
   }
 }

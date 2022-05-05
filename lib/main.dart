@@ -4,11 +4,7 @@ import 'utils/tray.dart';
 import 'widgets/clock.dart';
 import 'models/event.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  runApp(const Wallop());
-}
+void main() => runApp(const Wallop());
 
 class Wallop extends StatefulWidget {
   const Wallop({Key? key}) : super(key: key);
@@ -18,31 +14,11 @@ class Wallop extends StatefulWidget {
 }
 
 class _Wallop extends State<Wallop> {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    MaterialApp app = MaterialApp(
-      title: 'Wallop',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const MainView(),
-    );
-
-    return app;
-  }
-}
-
-class MainView extends StatefulWidget {
-  const MainView({Key? key}) : super(key: key);
-
-  @override
-  _MainViewState createState() => _MainViewState();
-}
-
-class _MainViewState extends State<MainView> {
   final Tray _tray = Tray();
+
+  List<Event> events = [
+//    Event(DateTime.now().add(const Duration(minutes: 15)), DateTime.now().add(const Duration(hours: 1)))
+  ];
 
   @override
   void initState() {
@@ -56,19 +32,13 @@ class _MainViewState extends State<MainView> {
     super.dispose();
   }
 
-  List<Event> events = [
-//    Event(DateTime.now().add(const Duration(minutes: 15)), DateTime.now().add(const Duration(hours: 1)))
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return
-      SizedBox.expand(
-        child: Container(
-          alignment: Alignment.center,
-          color: const Color(0xFF2D2F41),
-          child: const ClockView(),
-        ),
-      );
+    MaterialApp app = const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ClockView(),
+    );
+
+    return app;
   }
 }
