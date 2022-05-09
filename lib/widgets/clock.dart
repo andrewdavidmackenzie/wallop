@@ -264,9 +264,8 @@ class ClockPainter extends CustomPainter {
   }
 
   void _drawTime(Canvas canvas, double radius, DateTime time) {
-    // Concentric circles
     final double secondHandLength = radius * 0.9;
-    final double minuteCountRadius = radius * 0.85;
+    final double minuteCountRadius = radius * 0.91;
     final double minuteHandLength = radius * 0.77;
     final double hourCountRadius = radius * 0.68;
     final double hourHandLength = radius * 0.55;
