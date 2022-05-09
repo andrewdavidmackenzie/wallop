@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'utils/tray.dart';
+import 'utils/menu.dart';
 import 'widgets/clock.dart';
 import 'models/event.dart';
 
@@ -14,7 +14,7 @@ class Wallop extends StatefulWidget {
 }
 
 class _Wallop extends State<Wallop> {
-  final Tray _tray = Tray();
+  final Menu _menu = Menu();
 
   List<Event> events = [
 //    Event(DateTime.now().add(const Duration(minutes: 15)), DateTime.now().add(const Duration(hours: 1)))
@@ -22,13 +22,13 @@ class _Wallop extends State<Wallop> {
 
   @override
   void initState() {
-    _tray.init();
+    _menu.init();
     super.initState();
   }
 
   @override
   void dispose() {
-    _tray.dispose();
+    _menu.dispose();
     super.dispose();
   }
 
