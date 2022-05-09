@@ -62,7 +62,7 @@ class ClockPainter extends CustomPainter {
     TextStyle textStyle = TextStyle(
       color: color,
       fontSize: size,
-      letterSpacing: -0.02,
+      letterSpacing: -0.01,
       leadingDistribution: TextLeadingDistribution.even
     );
     TextSpan textSpan = TextSpan(
@@ -79,12 +79,25 @@ class ClockPainter extends CustomPainter {
     textPainter.paint(canvas, Offset(position.dx - (textPainter.width/2.0), position.dy + 0.07));
   }
 
+  Offset _timeToOffset(int hours, int minutes, double radius) {
+    final double x = radius * cos(_hoursAndMinutesToAngle(hours, minutes));
+    final double y = radius * sin(_hoursAndMinutesToAngle(hours, minutes));
+    return Offset(x, y);
+  }
+
+
   double _hoursAndMinutesToAngle(int hour, int minutes) {
     return ((hour * 30 + minutes * 0.5) * pi / 180) - (pi / 2);
   }
 
   double _minutesToAngle(int minutes) {
     return (minutes * 6 * pi / 180) - (pi / 2);
+  }
+
+  Offset _minuteToOffset(int minutes, double radius) {
+    final double x = radius * cos(_minutesToAngle(minutes));
+    final double y = radius * sin(_minutesToAngle(minutes));
+    return Offset(x, y);
   }
 
   double _secondsToAngle(int minutes) {
@@ -123,7 +136,7 @@ class ClockPainter extends CustomPainter {
       ..strokeWidth = dashWidth;
 
     for (int hour = 1; hour < 13; hour += 1) {
-      // They end touching the outermost circle of radius `outerCircleRadius`
+      // They end touching the outermost circle of radius 1.0
       final double x1 = cos(_hoursAndMinutesToAngle(hour, 0));
       final double y1 = sin(_hoursAndMinutesToAngle(hour, 0));
 
@@ -131,11 +144,7 @@ class ClockPainter extends CustomPainter {
       final double x2 = dashCircleInnerRadius * cos(_hoursAndMinutesToAngle(hour, 0));
       final double y2 = dashCircleInnerRadius * sin(_hoursAndMinutesToAngle(hour, 0));
 
-      if (_dateTime.hour % 12 == hour) {
-        _drawTextAt(canvas, hour.toString(), Offset((x1+x2)/2, (y1+y2)/2), 0.2, hourColor);
-      } else {
-        canvas.drawLine(Offset(x1, y1), Offset(x2, y2), dashBrush);
-      }
+      canvas.drawLine(Offset(x1, y1), Offset(x2, y2), dashBrush);
     }
 
     return faceOutlineRadius;
@@ -164,14 +173,11 @@ class ClockPainter extends CustomPainter {
       Canvas canvas, double radius, DateTime from, Event event) {
     Path path = Path();
 
-    final double minHandX = radius * cos(_minutesToAngle(from.minute));
-    final double minHandY = radius * sin(_minutesToAngle(from.minute));
-    path.relativeMoveTo(minHandX, minHandY);
+    final minuteHand = _minuteToOffset(from.minute, radius);
+    path.relativeMoveTo(minuteHand.dx, minuteHand.dy);
 
     bool largeArc = ((from.minute + 30) % 60) < event.start.minute;
-    final double arcEndX = radius * cos(_minutesToAngle(event.start.minute));
-    final double arcEndY = radius * sin(_minutesToAngle(event.start.minute));
-    path.arcToPoint(Offset(arcEndX, arcEndY),
+    path.arcToPoint(_minuteToOffset(event.start.minute, radius),
         radius: Radius.circular(radius),
         largeArc: largeArc,
         clockwise: true);
@@ -258,25 +264,20 @@ class ClockPainter extends CustomPainter {
   }
 
   void _drawTime(Canvas canvas, double radius, DateTime time) {
-    // Concentric circles
     final double secondHandLength = radius * 0.9;
-    final double minuteHandLength = radius * 0.77;
+    final double minuteCountRadius = radius * 0.86;
+    final double minuteHandLength = radius * 0.76;
+    final double hourCountRadius = radius * 0.66;
     final double hourHandLength = radius * 0.55;
 
     final double hourHandWidth = radius * 0.07;
     final double minuteHandWidth = radius * 0.05;
     final double secondHandWidth = radius * 0.04;
 
-    final Paint secHandBrush = Paint()
-      ..color = const Color(0xFFFFA500)
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = secondHandWidth;
-
     final Paint minHandBrush = Paint()
       ..shader =
           const RadialGradient(colors: [Color(0xFF748EF6), minuteColor])
-              .createShader(Rect.fromCircle(center: Offset.zero, radius: radius))
+              .createShader(Rect.fromCircle(center: Offset.zero, radius: minuteHandLength))
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = minuteHandWidth;
@@ -284,23 +285,28 @@ class ClockPainter extends CustomPainter {
     final Paint hourHandBrush = Paint()
       ..shader =
           const RadialGradient(colors: [Color(0xFFEA74AB), hourColor])
-              .createShader(Rect.fromCircle(center: Offset.zero, radius: radius))
+              .createShader(Rect.fromCircle(center: Offset.zero, radius: hourHandLength))
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = hourHandWidth;
 
     // Draw the Hour hand
-    final double hourHandX = hourHandLength * cos(_hoursAndMinutesToAngle(time.hour, time.minute));
-    final double hourHandY = hourHandLength * sin(_hoursAndMinutesToAngle(time.hour, time.minute));
-    canvas.drawLine(Offset.zero, Offset(hourHandX, hourHandY), hourHandBrush);
+    canvas.drawLine(Offset.zero, _timeToOffset(time.hour, time.minute, hourHandLength) , hourHandBrush);
+    _drawTextAt(canvas, time.hour.toString(), _timeToOffset(time.hour, time.minute, hourCountRadius), 0.15, hourColor);
 
-    // Draw the minute hand
-    final double minHandX = minuteHandLength * cos(_minutesToAngle(time.minute));
-    final double minHandY = minuteHandLength * sin(_minutesToAngle(time.minute));
-    canvas.drawLine(Offset.zero, Offset(minHandX, minHandY), minHandBrush);
+      // Draw the minute hand
+    canvas.drawLine(Offset.zero, _minuteToOffset(time.minute, minuteHandLength), minHandBrush);
+    _drawTextAt(canvas, time.minute.toString().padLeft(2, '0'),
+        _minuteToOffset(time.minute, minuteCountRadius), 0.11, minuteColor);
 
     // Draw the second hand
     if (secondHand) {
+      final Paint secHandBrush = Paint()
+        ..color = const Color(0xFFFFA500)
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = secondHandWidth;
+
       final double secHandX = secondHandLength * cos(_secondsToAngle(time.second));
       final double secHandY = secondHandLength * sin(_secondsToAngle(time.second));
       canvas.drawLine(Offset.zero, Offset(secHandX, secHandY), secHandBrush);
