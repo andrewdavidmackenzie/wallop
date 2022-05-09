@@ -274,17 +274,26 @@ class ClockPainter extends CustomPainter {
   }
 
   void _textTime(Canvas canvas, DateTime time) {
-    String hour, delta, beforeOrAfter;
+    String hour, beforeOrAfter;
+    int delta;
     if (time.minute < 35) {
       hour = hourNames[time.hour % 12];
-      delta = deltaNames[((time.minute +2) / 5).round()];
+      delta = (time.minute / 5).round();
       beforeOrAfter = "past";
     } else {
       hour = hourNames[(time.hour + 1) % 12];
-      delta = deltaNames[((58 - time.minute) / 5).round()];
+      delta = ((60 - time.minute) / 5).round();
       beforeOrAfter = "to";
     }
-      _drawTextAt(canvas, "$delta $beforeOrAfter $hour", const Offset(0,-0.15), 0.08, textTimeColor);
+
+    String text;
+    String deltaText = deltaNames[delta];
+    if (delta == 0) {
+      text = "$hour $deltaText";
+    } else {
+      text = "$deltaText $beforeOrAfter $hour";
+    }
+      _drawTextAt(canvas, text, const Offset(0,-0.15), 0.08, textTimeColor);
   }
 
   void _drawTime(Canvas canvas, double radius, DateTime time) {
