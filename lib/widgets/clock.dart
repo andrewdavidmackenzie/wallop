@@ -296,7 +296,8 @@ class ClockPainter extends CustomPainter {
 
       // Draw the minute hand
     canvas.drawLine(Offset.zero, _minuteToOffset(time.minute, minuteHandLength), minHandBrush);
-    _drawTextAt(canvas, time.minute.toString(), _minuteToOffset(time.minute, minuteCountRadius), 0.11, minuteColor);
+    _drawTextAt(canvas, time.minute.toString().padLeft(2, '0'),
+        _minuteToOffset(time.minute, minuteCountRadius), 0.11, minuteColor);
 
     // Draw the second hand
     if (secondHand) {
