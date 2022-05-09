@@ -276,7 +276,7 @@ class ClockPainter extends CustomPainter {
   void _textTime(Canvas canvas, DateTime time) {
     String hour, beforeOrAfter;
     int delta;
-    if (time.minute < 35) {
+    if (time.minute < 33) {
       hour = hourNames[time.hour % 12];
       delta = (time.minute / 5).round();
       beforeOrAfter = "past";
