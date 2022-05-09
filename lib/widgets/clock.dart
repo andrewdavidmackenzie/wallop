@@ -47,6 +47,15 @@ class ClockPainter extends CustomPainter {
   static const hourColor = Color(0xFFC279FB);
   static const minuteColor = Color(0xFF77DDFF);
   static const tickColor = Color(0xFFEAECFF);
+  static const textTimeColor = Color(0xFFEAECFF);
+
+  static const hourNames = <String>[
+    "Twelve", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+    "Nine", "Ten", "Eleven"
+  ];
+
+  static const deltaNames = <String>["O'Clock", "Five", "Ten", "Quarter", "Twenty",
+    "Twenty Five", "Half"];
 
   final _dateTime = DateTime.now();
   final bool secondHand;
@@ -62,7 +71,7 @@ class ClockPainter extends CustomPainter {
     TextStyle textStyle = TextStyle(
       color: color,
       fontSize: size,
-      letterSpacing: -0.01,
+      letterSpacing: -0.005,
       leadingDistribution: TextLeadingDistribution.even
     );
     TextSpan textSpan = TextSpan(
@@ -76,7 +85,8 @@ class ClockPainter extends CustomPainter {
     );
     textPainter.layout();
     // We want text centered at position so we move text origin by half w/h
-    textPainter.paint(canvas, Offset(position.dx - (textPainter.width/2.0), position.dy + 0.07));
+    textPainter.paint(canvas, Offset(position.dx - (textPainter.width/2.0),
+                                     position.dy + (size/2.0)));
   }
 
   Offset _timeToOffset(int hours, int minutes, double radius) {
@@ -263,9 +273,32 @@ class ClockPainter extends CustomPainter {
     }
   }
 
+  void _textTime(Canvas canvas, DateTime time) {
+    String hour, beforeOrAfter;
+    int delta;
+    if (time.minute < 35) {
+      hour = hourNames[time.hour % 12];
+      delta = (time.minute / 5).round();
+      beforeOrAfter = "past";
+    } else {
+      hour = hourNames[(time.hour + 1) % 12];
+      delta = ((60 - time.minute) / 5).round();
+      beforeOrAfter = "to";
+    }
+
+    String text;
+    String deltaText = deltaNames[delta];
+    if (delta == 0) {
+      text = "$hour $deltaText";
+    } else {
+      text = "$deltaText $beforeOrAfter $hour";
+    }
+      _drawTextAt(canvas, text, const Offset(0,-0.15), 0.08, textTimeColor);
+  }
+
   void _drawTime(Canvas canvas, double radius, DateTime time) {
     final double secondHandLength = radius * 0.9;
-    final double minuteCountRadius = radius * 0.86;
+    final double minuteCountRadius = radius * 0.89;
     final double minuteHandLength = radius * 0.76;
     final double hourCountRadius = radius * 0.66;
     final double hourHandLength = radius * 0.55;
@@ -311,6 +344,8 @@ class ClockPainter extends CustomPainter {
       final double secHandY = secondHandLength * sin(_secondsToAngle(time.second));
       canvas.drawLine(Offset.zero, Offset(secHandX, secHandY), secHandBrush);
     }
+
+    _textTime(canvas, time);
   }
 
   @override

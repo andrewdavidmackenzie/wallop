@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:tray_manager/tray_manager.dart';
 
-class Tray with TrayListener {
+class Menu with TrayListener {
   String getIcon() {
     return Platform.isWindows
         ? 'images/tray_icon_original.ico'
