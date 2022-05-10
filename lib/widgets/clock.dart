@@ -273,7 +273,11 @@ class ClockPainter extends CustomPainter {
     }
   }
 
-  void _textTime(Canvas canvas, DateTime time) {
+  /// Convert a DateTime (it's hours and minutes) to a text representation:
+  /// e.g. "Ten past Twelve"
+  /// e.g. "Quarter to One"
+  /// e.g. "Three O'Clock"
+  String timeToString(DateTime time) {
     String hour, beforeOrAfter;
     int delta;
     if (time.minute < 33) {
@@ -293,14 +297,19 @@ class ClockPainter extends CustomPainter {
     } else {
       text = "$deltaText $beforeOrAfter $hour";
     }
-      _drawTextAt(canvas, text, const Offset(0,-0.15), 0.08, textTimeColor);
+
+    return text;
+  }
+
+  void _textTime(Canvas canvas, DateTime time) {
+      _drawTextAt(canvas, timeToString(time), const Offset(0,-0.15), 0.08, textTimeColor);
   }
 
   void _drawTime(Canvas canvas, double radius, DateTime time) {
     final double secondHandLength = radius * 0.9;
-    final double minuteCountRadius = radius * 0.89;
-    final double minuteHandLength = radius * 0.76;
-    final double hourCountRadius = radius * 0.66;
+    final double minuteCountRadius = radius * 0.86;
+    final double minuteHandLength = radius * 0.74;
+    final double hourCountRadius = radius * 0.69;
     final double hourHandLength = radius * 0.55;
 
     final double hourHandWidth = radius * 0.07;
