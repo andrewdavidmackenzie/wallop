@@ -13,8 +13,8 @@ class Menu with TrayListener {
 
   List<MenuItem> _getMenuItems() {
     return [
-      MenuItem(title: 'Preferences'),
-      MenuItem(title: 'Quit'),
+      MenuItem(title: 'Preferences...', toolTip: 'Open Preferences'),
+      MenuItem(title: 'Quit', toolTip: 'Quit'),
       // MenuItem(
       //   title: 'Copy As',
       //   items: [
