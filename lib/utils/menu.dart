@@ -1,10 +1,12 @@
 import 'dart:io';
-//import 'package:preference_list/preference_list.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tray_manager/tray_manager.dart';
 
 class Menu with TrayListener {
+  late BuildContext context;
+
   String getIcon() {
     return Platform.isWindows
         ? 'images/tray_icon_original.ico'
@@ -25,7 +27,7 @@ class Menu with TrayListener {
     ];
   }
 
-  void init() {
+  void init(BuildContext context) {
     trayManager.addListener(this);
     trayManager.setIcon(getIcon());
     trayManager.setContextMenu(_getMenuItems());
@@ -35,10 +37,21 @@ class Menu with TrayListener {
     trayManager.removeListener(this);
   }
 
+  void showPreferences(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const AlertDialog(
+            content: Text("Hello"),
+          );
+        });
+  }
+
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
     switch (menuItem.title) {
-      case 'Preferences':
+      case 'Preferences...':
+        showPreferences(context);
         break;
 
       case 'Quit':

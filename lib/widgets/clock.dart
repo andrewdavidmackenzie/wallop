@@ -50,12 +50,12 @@ class ClockPainter extends CustomPainter {
   static const textTimeColor = Color(0xFFEAECFF);
 
   static const hourNames = <String>[
-    "Twelve", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
-    "Nine", "Ten", "Eleven"
+    "twelve", "one", "two", "three", "four", "five", "six", "seven", "eight",
+    "nine", "ten", "eleven"
   ];
 
-  static const deltaNames = <String>["O'Clock", "Five", "Ten", "Quarter", "Twenty",
-    "Twenty Five", "Half"];
+  static const deltaNames = <String>["o'clock", "five", "ten", "quarter",
+    "twenty", "twenty five", "half"];
 
   final _dateTime = DateTime.now();
   final bool secondHand;

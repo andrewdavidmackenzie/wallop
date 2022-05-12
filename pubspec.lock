@@ -236,6 +236,34 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  multi_window:
+    dependency: "direct main"
+    description:
+      name: multi_window
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
+  multi_window_interface:
+    dependency: transitive
+    description:
+      name: multi_window_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
+  multi_window_linux:
+    dependency: transitive
+    description:
+      name: multi_window_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
+  multi_window_macos:
+    dependency: transitive
+    description:
+      name: multi_window_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   node_preamble:
     dependency: transitive
     description:
@@ -264,6 +292,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
+  plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: plugin_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.2"
   pool:
     dependency: transitive
     description:

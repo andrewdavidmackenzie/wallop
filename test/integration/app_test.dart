@@ -11,7 +11,7 @@ void main() {
 void testWallop() {
   testWidgets('App name smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const Wallop());
+    await tester.pumpWidget(const WallopApp());
 
     // Verify that our app is called what we expect
 //    expect(find.byTooltip('Show Preferences'), findsOneWidget);
