@@ -1,28 +1,23 @@
 import 'dart:io';
 //import 'package:preference_list/preference_list.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' hide MenuItem, Menu;
 import 'package:flutter/services.dart';
 import 'package:tray_manager/tray_manager.dart';
 
-class Menu with TrayListener {
+class WallopMenu with TrayListener {
   String getIcon() {
     return Platform.isWindows
         ? 'images/tray_icon_original.ico'
         : 'images/tray_icon_original.png';
   }
 
-  List<MenuItem> _getMenuItems() {
-    return [
-      MenuItem(title: 'Preferences...', toolTip: 'Open Preferences'),
-      MenuItem(title: 'Quit', toolTip: 'Quit'),
-      // MenuItem(
-      //   title: 'Copy As',
-      //   items: [
-      //     MenuItem(title: 'Copy Remote File Url'),
-      //     MenuItem(title: 'Copy Remote File Url From...'),
-      //   ],
-      // ),
-    ];
+  Menu _getMenuItems() {
+    return Menu(
+      items:
+       [
+        MenuItem(key: "preferences", label: 'Preferences...', toolTip: 'Open Preferences'),
+        MenuItem(key: "quit", label: 'Quit', toolTip: 'Quit'),
+    ]);
   }
 
   void init() {
@@ -37,11 +32,11 @@ class Menu with TrayListener {
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
-    switch (menuItem.title) {
-      case 'Preferences':
+    switch (menuItem.key) {
+      case 'preferences':
         break;
 
-      case 'Quit':
+      case 'quit':
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       break;
 

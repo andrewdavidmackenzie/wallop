@@ -29,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  tray_manager: ^0.1.4
+  tray_manager: ^0.1.6
   bot_toast: ^4.0.1
   preference_list: ^0.0.1
 
