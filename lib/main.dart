@@ -14,7 +14,7 @@ class Wallop extends StatefulWidget {
 }
 
 class _Wallop extends State<Wallop> {
-  final Menu _menu = Menu();
+  final WallopMenu _menu = WallopMenu();
 
   List<Event> events = [
 //    Event(DateTime.now().add(const Duration(minutes: 15)), DateTime.now().add(const Duration(hours: 1)))
